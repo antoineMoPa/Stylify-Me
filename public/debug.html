@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Visualizer with Fetch</title>
+    <style>
+        .swatch {
+            display: inline-block;
+            width: 100px;
+            height: 50px;
+            margin: 5px;
+            border: 1px solid #000;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="urlInput" style="width: 100%; height: 100px;" placeholder="Enter URL here..."></textarea>
+    <button onclick="fetchData()">Fetch Data</button>
+    <h2>Color Swatches</h2>
+    <div id="colorSwatches"></div>
+    <h2>Typography</h2>
+    <table id="typographyTable"></table>
+
+    <script>
+        async function fetchData() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const queryURL = `http://localhost:8888/query?url=${encodeURIComponent(urlInput)}`;
+
+            try {
+                const response = await fetch(queryURL);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                displayColors(data);
+                displayTypography(data.typography);
+            } catch (error) {
+                alert('Failed to fetch data: ' + error.message);
+            }
+        }
+
+        function displayColors(data) {
+            const colorsText = data.coloursText;
+            const colorsBg = data.coloursBg;
+            const swatchesContainer = document.getElementById('colorSwatches');
+            swatchesContainer.innerHTML = '';
+
+            colorsText.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'swatch';
+                swatch.style.backgroundColor = color[0];
+                swatch.title = `Text Color: ${color[0]} | Usage: ${color[1]}`;
+                swatchesContainer.appendChild(swatch);
+            });
+
+            colorsBg.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'swatch';
+                swatch.style.backgroundColor = color[0];
+                swatch.title = `Background Color: ${color[0]} | Usage: ${color[1]}`;
+                swatchesContainer.appendChild(swatch);
+            });
+        }
+
+        function displayTypography(typography) {
+            const table = document.getElementById('typographyTable');
+            table.innerHTML = '<tr><th>Element</th><th>Name</th><th>Text Color</th><th>Font</th><th>Font Size</th><th>Leading</th><th>Font Style</th></tr>';
+
+            for (const key in typography) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${key}</td>
+                    <td>${typography[key].name}</td>
+                    <td>${typography[key]['text-colour']}</td>
+                    <td>${typography[key].font}</td>
+                    <td>${typography[key]['font-size']}</td>
+                    <td>${typography[key].leading}</td>
+                    <td>${typography[key]['font-style']}</td>
+                `;
+                table.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
