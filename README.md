@@ -22,6 +22,10 @@ Visit:
 
 http://localhost:8888/query?url=http://lumen5.com
 
+Or visit the debug URL to see colors:
+
+http://localhost:8888/debug.html
+
 
 ### Frontend
 
