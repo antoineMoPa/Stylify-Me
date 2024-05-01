@@ -20,11 +20,17 @@
             border: 1px solid #ddd;
             padding: 8px;
         }
+        #loadingIndicator {
+            display: none;
+            color: #666;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <textarea id="urlInput" style="width: 100%; height: 100px;" placeholder="Enter URL here..."></textarea>
     <button onclick="fetchData()">Fetch Data</button>
+    <div id="loadingIndicator">Loading...</div>
     <h2>Color Swatches</h2>
     <div id="colorSwatches"></div>
     <h2>Typography</h2>
@@ -34,9 +40,12 @@
         async function fetchData() {
             const urlInput = document.getElementById('urlInput').value.trim();
             const queryURL = `http://localhost:8888/query?url=${encodeURIComponent(urlInput)}`;
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'block';
 
             try {
                 const response = await fetch(queryURL);
+                loadingIndicator.style.display = 'none';
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -44,6 +53,7 @@
                 displayColors(data);
                 displayTypography(data.typography);
             } catch (error) {
+                loadingIndicator.style.display = 'none';
                 alert('Failed to fetch data: ' + error.message);
             }
         }
