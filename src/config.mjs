@@ -12,6 +12,7 @@ export const config = {
     "http://stylify.herokuapp.com",
     "http://localhost:9185",
     "http://localhost:7210",
+    ...process.env.VALID_REFS.split(',')
   ],
 };
 
