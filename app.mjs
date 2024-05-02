@@ -10,6 +10,7 @@ import morgan from "morgan";
 import serveFavicon from "serve-favicon";
 import serveStatic from "serve-static";
 import compression from "compression";
+import cors from 'cors';
 import { getStylifyJsonHandler } from "./src/get-stylify-json.mjs";
 import { getPdfHandler } from "./src/get-pdf.mjs";
 import { getRenderPdfViewHandler } from "./src/get-render-pdf-view.mjs";
@@ -20,6 +21,10 @@ import { validateUrlParam } from "./src/validateUrlParam.mjs";
 const app = express();
 
 const dirPath = new URL(".", import.meta.url).pathname;
+
+if (process.env.ENABLE_CORS) {
+    app.use(cors());
+}
 
 app.set("port", process.env.PORT || 5001);
 app.use(compression());
